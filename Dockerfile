@@ -11,6 +11,11 @@ ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm ci --omit=dev --legacy-peer-deps
 COPY --from=builder /app/dist ./dist
+
+# Create logs dir and hand ownership to the non-root node user
+# (only needed for local Docker runs; Railway uses console-only logging)
+RUN mkdir -p logs && chown -R node:node /app
+
 EXPOSE 5000
 USER node
 CMD ["node", "dist/server.js"]
