@@ -24,13 +24,27 @@ import contactRoutes     from "./routes/contact.routes";
 
 const app = express();
 
+/* ── Trust Railway / Vercel reverse proxy ───────────────── */
+// Required so rate-limiter sees real client IPs and secure cookies work correctly
+app.set("trust proxy", 1);
+
 /* ── Security headers ───────────────────────────────────── */
 app.use(helmet());
 
 /* ── CORS ───────────────────────────────────────────────── */
+const allowedOrigins = [
+  process.env.CLIENT_URL ?? "http://localhost:3000",
+  "http://localhost:3001",
+  "https://sarkar-packers-movers.vercel.app",
+];
+
 app.use(cors({
-  origin:      [process.env.CLIENT_URL ?? "http://localhost:3000", "http://localhost:3001",
-      "https://sarkar-packers-movers.vercel.app",],
+  origin: (origin, callback) => {
+    // Allow server-to-server / Postman (no origin) in non-production
+    if (!origin && process.env.NODE_ENV !== "production") return callback(null, true);
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error(`CORS: origin '${origin}' not allowed`));
+  },
   credentials: true,
   methods:     ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 }));
