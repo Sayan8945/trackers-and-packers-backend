@@ -1,0 +1,60 @@
+{
+  "info": {
+    "name": "Sarkar Packers & Movers API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl",      "value": "http://localhost:5000" },
+    { "key": "accessToken",  "value": "" },
+    { "key": "refreshToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        { "name": "Register",           "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/register",          "body": { "mode": "raw", "raw": "{\"name\":\"Test User\",\"email\":\"test@example.com\",\"mobile\":\"9876543210\",\"password\":\"Test@1234\"}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Login",              "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/login",             "body": { "mode": "raw", "raw": "{\"email\":\"test@example.com\",\"password\":\"Test@1234\"}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Refresh Token",      "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/refresh-token",     "body": { "mode": "raw", "raw": "{\"refreshToken\":\"{{refreshToken}}\"}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Logout",             "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/logout",            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }] } },
+        { "name": "Send Email OTP",     "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/send-email-otp",   "body": { "mode": "raw", "raw": "{\"identifier\":\"test@example.com\"}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Verify Email OTP",   "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/verify-email-otp", "body": { "mode": "raw", "raw": "{\"identifier\":\"test@example.com\",\"otp\":\"123456\"}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Forgot Password",    "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/forgot-password",  "body": { "mode": "raw", "raw": "{\"email\":\"test@example.com\"}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Google OAuth",       "request": { "method": "GET",  "url": "{{baseUrl}}/api/auth/google" } }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        { "name": "Get Profile",     "request": { "method": "GET", "url": "{{baseUrl}}/api/users/profile",        "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }] } },
+        { "name": "Update Profile",  "request": { "method": "PUT", "url": "{{baseUrl}}/api/users/profile",        "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "body": { "mode": "raw", "raw": "{\"name\":\"Updated Name\"}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Change Password", "request": { "method": "PUT", "url": "{{baseUrl}}/api/users/change-password","header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "body": { "mode": "raw", "raw": "{\"currentPassword\":\"Test@1234\",\"newPassword\":\"New@1234\"}", "options": { "raw": { "language": "json" } } } } }
+      ]
+    },
+    {
+      "name": "Leads",
+      "item": [
+        { "name": "Create Lead", "request": { "method": "POST", "url": "{{baseUrl}}/api/leads", "body": { "mode": "raw", "raw": "{\"name\":\"John Doe\",\"mobile\":\"9876543210\",\"email\":\"john@example.com\",\"moveFrom\":\"Siliguri\",\"moveTo\":\"Kolkata\",\"serviceType\":\"household\"}", "options": { "raw": { "language": "json" } } } } }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        { "name": "Admin Login",      "request": { "method": "POST", "url": "{{baseUrl}}/api/admin/login",      "body": { "mode": "raw", "raw": "{\"email\":\"admin@sarkarpackers.in\",\"password\":\"Admin@123\"}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Dashboard",        "request": { "method": "GET",  "url": "{{baseUrl}}/api/admin/dashboard",  "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }] } },
+        { "name": "Get All Leads",    "request": { "method": "GET",  "url": "{{baseUrl}}/api/admin/leads",      "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }] } },
+        { "name": "Get All Blogs",    "request": { "method": "GET",  "url": "{{baseUrl}}/api/admin/blogs",      "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }] } },
+        { "name": "Create Blog",      "request": { "method": "POST", "url": "{{baseUrl}}/api/admin/blogs",      "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "body": { "mode": "raw", "raw": "{\"title\":\"Moving Tips\",\"excerpt\":\"Top 5 tips\",\"content\":\"Full content...\",\"category\":\"Tips\",\"status\":\"published\"}", "options": { "raw": { "language": "json" } } } } }
+      ]
+    },
+    {
+      "name": "Public",
+      "item": [
+        { "name": "Get Blogs",        "request": { "method": "GET", "url": "{{baseUrl}}/api/blogs" } },
+        { "name": "Get Blog by Slug", "request": { "method": "GET", "url": "{{baseUrl}}/api/blogs/moving-tips" } },
+        { "name": "Get Testimonials", "request": { "method": "GET", "url": "{{baseUrl}}/api/testimonials" } },
+        { "name": "Contact Form",     "request": { "method": "POST","url": "{{baseUrl}}/api/contact", "body": { "mode": "raw", "raw": "{\"name\":\"Jane\",\"email\":\"jane@example.com\",\"subject\":\"Query\",\"message\":\"I need help with shifting.\"}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Health Check",     "request": { "method": "GET", "url": "{{baseUrl}}/health" } }
+      ]
+    }
+  ]
+}
