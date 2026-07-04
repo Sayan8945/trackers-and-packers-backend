@@ -2,16 +2,25 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/User";
 import { logger } from "../utils/logger";
-require("dotenv").config();
-
 
 export const initPassport = (): void => {
+  const clientID     = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+  if (!clientID || !clientSecret) {
+    logger.warn(
+      "Google OAuth credentials not set (GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET) — " +
+      "Google login will be unavailable until they are provided."
+    );
+    return;
+  }
+
   passport.use(
     new GoogleStrategy(
       {
-        clientID:     process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        callbackURL:  process.env.GOOGLE_CALLBACK_URL ?? "/api/auth/google/callback",
+        clientID,
+        clientSecret,
+        callbackURL: process.env.GOOGLE_CALLBACK_URL ?? "/api/auth/google/callback",
       },
       async (_accessToken, _refreshToken, profile, done) => {
         try {
@@ -45,4 +54,6 @@ export const initPassport = (): void => {
       }
     )
   );
+
+  logger.info("Google OAuth strategy registered");
 };
