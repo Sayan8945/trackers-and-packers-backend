@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import helmet from "helmet";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
@@ -32,22 +32,30 @@ app.set("trust proxy", 1);
 app.use(helmet());
 
 /* ── CORS ───────────────────────────────────────────────── */
-const allowedOrigins = [
+const allowedOrigins = new Set([
   process.env.CLIENT_URL ?? "http://localhost:3000",
+  "http://localhost:3000",
   "http://localhost:3001",
   "https://sarkar-packers-movers.vercel.app",
-];
+  "https://trackers-and-packers-frontend-gamma.vercel.app",
+]);
 
-app.use(cors({
+const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
-    // Allow server-to-server / Postman (no origin) in non-production
-    if (!origin && process.env.NODE_ENV !== "production") return callback(null, true);
-    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error(`CORS: origin '${origin}' not allowed`));
+    // No origin = same-origin request or server tools (curl, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.has(origin)) return callback(null, true);
+    // Unknown origin — deny without throwing (keeps CORS headers clean)
+    return callback(null, false);
   },
   credentials: true,
   methods:     ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-}));
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+// Explicitly handle preflight for every route
+app.options("*", cors(corsOptions));
 
 /* ── Rate limiting ──────────────────────────────────────── */
 app.use("/api/auth", rateLimit({
